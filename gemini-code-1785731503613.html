@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HKBU Robot Dog Interactive Voice Experience</title>
+    <style>
+        :root {
+            --hkbu-blue: #003366;
+            --hkbu-gold: #c59b27;
+            --bg-color: #eef2f5;
+            --card-bg: #ffffff;
+            --chat-user: #dcf8c6;
+            --chat-robot: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--hkbu-blue);
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            background-color: #6c757d;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .status-badge.listening {
+            background-color: #28a745;
+            animation: pulse 1.5s infinite;
+        }
+
+        .status-badge.speaking {
+            background-color: var(--hkbu-gold);
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+        }
+
+        /* Main 2-Column Split Layout */
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Left Column: Chat Window */
+        .chat-section {
+            width: 45%;
+            background: #e5ddd5;
+            display: flex;
+            flex-direction: column;
+            border-right: 2px solid #ccc;
+        }
+
+        .chat-header {
+            background: #f0f0f0;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .robot-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--hkbu-blue);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            word-wrap: break-word;
+        }
+
+        .message.robot {
+            background: var(--chat-robot);
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+
+        .message.user {
+            background: var(--chat-user);
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        .chat-input-bar {
+            background: #f0f0f0;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-top: 1px solid #ddd;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        /* Right Column: Hierarchy Panel */
+        .hierarchy-section {
+            width: 55%;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: var(--bg-color);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 14px;
+            border: 2px solid transparent;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .card.active {
+            border-color: #28a745;
+            background-color: #f0fff0;
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(40,167,69,0.2);
+        }
+
+        .card h4 {
+            margin: 0 0 6px 0;
+            color: var(--hkbu-blue);
+        }
+
+        .keywords {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .script-text {
+            font-size: 0.85rem;
+            color: #444;
+            line-height: 1.3;
+        }
+
+        audio {
+            display: none; /* Audio elements play invisibly in background */
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🤖 HKBU Robot Dog Face-to-Face Voice Experience</h1>
+    <span id="system-status" class="status-badge">Initializing...</span>
+</header>
+
+<div class="main-container">
+    <!-- Left Hand Side: WhatsApp-style Face-to-Face Chatbot -->
+    <div class="chat-section">
+        <div class="chat-header">
+            <div class="robot-avatar">🐕</div>
+            <div>
+                <strong>HKBU Robot Dog</strong>
+                <div style="font-size: 0.75rem; color: #666;" id="robot-subtext">Connecting...</div>
+            </div>
+        </div>
+
+        <div id="chat-messages" class="chat-messages">
+            <!-- Messages stream here dynamically -->
+        </div>
+
+        <div class="chat-input-bar" id="input-status-bar">
+            🎙️ Hands-Free Mode Active. Speak directly into your microphone...
+        </div>
+    </div>
+
+    <!-- Right Hand Side: Active Component Hierarchy Display -->
+    <div class="hierarchy-section">
+        <h2>Category 1: Graduate Attributes (GA)</h2>
+        <div id="ga-cards" class="grid"></div>
+
+        <h2>Category 2: Generative AI Principles</h2>
+        <div id="ai-cards" class="grid"></div>
+    </div>
+</div>
+
+<!-- Audio Player Tag -->
+<audio id="global-audio-player"></audio>
+
+<script>
+    // --- Data Model ---
+    const scriptsData = [
+        // Level 1 Overviews
+        { 
+            id: "ga_intro", 
+            cat: "ga", 
+            level: 1,
+            title: "📢 Level 1: GA Overview (全人教育簡介)", 
+            keywords: ["全人教育", "畢業特質", "Overview", "歡迎", "特質"], 
+            text: "歡迎嚟到香港浸會大學！浸大以『全人教育』為理念，致力啟發同學嘅全人潛能。同學喺大學期間培養公民、知識、學習、創意、溝通、群體同埋康健七大畢業特質，就會成為全面發展、敢於創新的跨學科人才，積極回饋社會！想知多啲？歡迎問下我啦！", 
+            audioUrl: "level1_ga.mp3" 
+        },
+        { 
+            id: "ai_intro", 
+            cat: "ai", 
+            level: 1,
+            title: "📢 Level 1: GenAI Overview (AI 原則簡介)", 
+            keywords: ["AI 原則", "生成式 AI", "AI 理念", "原則"], 
+            text: "歡迎了解浸大嘅 AI 教學理念！浸大針對生成式 AI 制定咗四大教學同評核原則：AI 賦能、AI 批判、AI 倫理，同埋樹立人類獨特性！想知多一點？歡迎問下我啦！", 
+            audioUrl: "level1_genai.mp3" 
+        },
+
+        // GA Level 2 Items
+        { id: "ga1", cat: "ga", level: 2, title: "1. Citizenship (公民)", keywords: ["公民", "Citizenship"], text: "『公民』特質係要培養同學嘅全球視野同職業道德。浸大透過海外實習同埋認識聯合國永續發展目標，讓同學理解國際社會關注嘅議題，提升喺跨國企業嘅競爭力。", audioUrl: "ga_1_citizenship.mp3" },
+        { id: "ga2", cat: "ga", level: 2, title: "2. Knowledge (知識)", keywords: ["知識", "Knowledge"], text: "『知識』特質講求主修專精同埋跨領域應用。浸大結合 AI 科技、科學同人文學科，訓練同學掌握業界最新嘅雙軌技能，適應多元化嘅職場需求。", audioUrl: "ga_2_knowledge.mp3" },
+        { id: "ga3", cat: "ga", level: 2, title: "3. Learning (學習)", keywords: ["學習", "Learning"], text: "『學習』特質著重善於反思、虛心同埋自主求學。浸大培養同學兼具人文同科技視野去解決問題，喺學期間累積處理複雜實務專案嘅經驗。", audioUrl: "ga_3_learning.mp3" },
+        { id: "ga4", cat: "ga", level: 2, title: "4. Creativity (創意)", keywords: ["創意", "Creativity"], text: "『創意』特質強調具備創新同開拓精神。呢種主動求變同突破傳統嘅思維，可以協助同學喺未來任何行業靈活應對變局，推動突破同創新。", audioUrl: "ga_4_creativity.mp3" },
+        { id: "ga5", cat: "ga", level: 2, title: "5. Communication (溝通)", keywords: ["溝通", "Communication"], text: "『溝通』特質強調同理心同埋多語言表達能力。浸大提供豐富嘅語文訓練同跨文化交流活動，提升同學喺職場同日常團隊中嘅溝通技巧。", audioUrl: "ga_5_communication.mp3" },
+        { id: "ga6", cat: "ga", level: 2, title: "6. Teamwork (群體)", keywords: ["群體", "團隊", "Teamwork"], text: "『群體』特質著重團隊協作，服務多元社群。呢樣可以鍛鍊同學嘅高效協作同人際適應力。面對 AI 轉型下嘅職場，能迅速融入唔同團隊，將人同技術順暢結合，創造不可替代嘅團隊生產力。", audioUrl: "ga_6_teamwork.mp3" },
+        { id: "ga7", cat: "ga", level: 2, title: "7. Well-being (康健)", keywords: ["康健", "健康", "Well-being"], text: "『康健』特質強調身、心、靈三個層面嘅均衡發展。同學喺大學期間培養強健體魄、建立情緒韌性，並確立個人價值同使命感。呢樣可以等佢哋喺面對職場挑戰時，依然保持內在平衡，實現永續嘅全人發展。", audioUrl: "ga_7_wellbeing.mp3" },
+
+        // GenAI Level 2 Items
+        { id: "ai1", cat: "ai", level: 2, title: "1. AI-Empowering (AI 賦能)", keywords: ["賦能", "Empowering", "第一個", "1"], text: "『AI 賦能』原則旨在擁抱生成式 AI，賦能師生發揮 AI 工具嘅潛力，將佢融入大學嘅知識創造同教學生態系統之中。", audioUrl: "ai_1_empowering.mp3" },
+        { id: "ai2", cat: "ai", level: 2, title: "2. AI-Critical (AI 批判)", keywords: ["批判", "Critical", "第二個", "2"], text: "『AI 批判』原則旨在鼓勵對生成式 AI 保持健康、有理據嘅懷疑態度，培養師生批判性思考，並理解 AI 工具嘅優勢、缺點同局限。", audioUrl: "ai_2_critical.mp3" },
+        { id: "ai3", cat: "ai", level: 2, title: "3. AI-Ethical (AI 倫理)", keywords: ["倫理", "Ethical", "第三個", "3"], text: "『AI 倫理』原則旨在維護學術誠信、透明度，並確保負責任同埋符合倫理咁使用生成式 AI 工具。", audioUrl: "ai_3_ethical.mp3" },
+        { id: "ai4", cat: "ai", level: 2, title: "4. Build Human Uniqueness (樹立人類獨特性)", keywords: ["獨特性", "人類獨特性", "Uniqueness", "第四個", "4"], text: "『樹立人類獨特性』原則旨在肯定師生作為具備獨特生活經驗、知識同技能嘅個人，並喺大學教學生態系統中提供空間同時間，讓每個人發掘並發展自身獨特嘅價值。", audioUrl: "ai_4_uniqueness.mp3" }
+    ];
+
+    // End / Next keywords in Cantonese
+    const endKeywords = ["完", "拜拜", "下一個", "冇啦", "結束", "next", "bye", "完結"];
+
+    // System States
+    let currentMode = "ga"; // 'ga' or 'ai'
+    let recognition = null;
+    let isRobotSpeaking = false;
+    const audioPlayer = document.getElementById('global-audio-player');
+
+    // --- Render Hierarchy Cards ---
+    function renderHierarchy() {
+        const gaContainer = document.getElementById('ga-cards');
+        const aiContainer = document.getElementById('ai-cards');
+
+        scriptsData.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.id = `card-${item.id}`;
+            card.innerHTML = `
+                <h4>${item.title}</h4>
+                <div class="keywords"><strong>Keywords:</strong> ${item.keywords.join(', ')}</div>
+                <div class="script-text">${item.text}</div>
+            `;
+            if (item.cat === 'ga') gaContainer.appendChild(card);
+            else aiContainer.appendChild(card);
+        });
+    }
+
+    // --- UI Helper Functions ---
+    function addChatMessage(sender, text) {
+        const chatContainer = document.getElementById('chat-messages');
+        const msg = document.createElement('div');
+        msg.className = `message ${sender}`;
+        msg.innerText = text;
+        chatContainer.appendChild(msg);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function highlightCard(itemId) {
+        document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+        if (itemId) {
+            const activeCard = document.getElementById(`card-${itemId}`);
+            if (activeCard) {
+                activeCard.classList.add('active');
+                activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+    }
+
+    function setStatus(text, stateClass) {
+        const badge = document.getElementById('system-status');
+        const subtext = document.getElementById('robot-subtext');
+        badge.innerText = text;
+        badge.className = `status-badge ${stateClass}`;
+        subtext.innerText = text;
+    }
+
+    // --- Play Audio & Flow Controller ---
+    function playRobotResponse(item, customPromptText = "") {
+        isRobotSpeaking = true;
+        if (recognition) recognition.stop();
+
+        setStatus("🐕 Speaking...", "speaking");
+        highlightCard(item.id);
+
+        const fullText = item.text + (customPromptText ? " " + customPromptText : "");
+        addChatMessage("robot", fullText);
+
+        audioPlayer.src = item.audioUrl;
+        audioPlayer.play().catch(e => console.log("Audio playback error:", e));
+
+        audioPlayer.onended = () => {
+            isRobotSpeaking = false;
+            setStatus("🎙️ Listening...", "listening");
+            startSpeechRecognition();
+        };
+    }
+
+    // --- Speech Recognition Engine ---
+    function startSpeechRecognition() {
+        if (isRobotSpeaking) return;
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            setStatus("STT Not Supported", "");
+            return;
+        }
+
+        if (!recognition) {
+            recognition = new SpeechRecognition();
+            recognition.lang = 'zh-HK';
+            recognition.continuous = true;
+            recognition.interimResults = false;
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[event.results.length - 1][0].transcript.trim();
+                if (transcript) {
+                    processUserInput(transcript);
+                }
+            };
+
+            recognition.onend = () => {
+                // Auto-restart recognition if robot isn't speaking
+                if (!isRobotSpeaking) {
+                    try { recognition.start(); } catch(e){}
+                }
+            };
+        }
+
+        try {
+            recognition.start();
+            setStatus("🎙️ Listening...", "listening");
+        } catch(e) {}
+    }
+
+    // --- Dialogue Logic Processor ---
+    function processUserInput(userSpeech) {
+        addChatMessage("user", userSpeech);
+
+        // Check if user wants to end or switch mode
+        const isEndCall = endKeywords.some(kw => userSpeech.toLowerCase().includes(kw));
+        if (isEndCall) {
+            switchMode();
+            return;
+        }
+
+        // Match against current category items
+        const matchingItem = scriptsData.find(item => 
+            item.cat === currentMode && 
+            item.level === 2 && 
+            item.keywords.some(kw => userSpeech.toLowerCase().includes(kw.toLowerCase()))
+        );
+
+        if (matchingItem) {
+            const promptFollowUp = "你仲想了解邊一項，定係想結束呢？";
+            playRobotResponse(matchingItem, promptFollowUp);
+        } else {
+            // Unrecognized keyword
+            addChatMessage("robot", "我未好聽得清，你可以再講多一次想了解邊一個項目，或者講『下一個』切換主題！");
+        }
+    }
+
+    // --- Switch between GA and GenAI Mode ---
+    function switchMode() {
+        if (currentMode === "ga") {
+            currentMode = "ai";
+            const introAI = scriptsData.find(i => i.id === "ai_intro");
+            playRobotResponse(introAI);
+        } else {
+            currentMode = "ga";
+            const introGA = scriptsData.find(i => i.id === "ga_intro");
+            playRobotResponse(introGA);
+        }
+    }
+
+    // --- Auto Start Experience on Page Load ---
+    window.onload = () => {
+        renderHierarchy();
+
+        // Start with GA Intro directly
+        const firstItem = scriptsData.find(i => i.id === "ga_intro");
+        
+        // Browser Autoplay Policy Handler
+        document.body.addEventListener('click', () => {
+            if (!isRobotSpeaking && audioPlayer.paused) {
+                playRobotResponse(firstItem);
+            }
+        }, { once: true });
+
+        // Auto-play initial intro
+        playRobotResponse(firstItem);
+    };
+</script>
+
+</body>
+</html>
