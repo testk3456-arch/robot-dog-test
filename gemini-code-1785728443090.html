@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HKBU Robot Dog Voice Command Tester</title>
+    <style>
+        :root {
+            --hkbu-blue: #003366;
+            --hkbu-gold: #c59b27;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            background-color: var(--hkbu-blue);
+            color: white;
+            padding: 20px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .status-badge {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .controls {
+            background: var(--card-bg);
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-mic {
+            background-color: var(--hkbu-blue);
+            color: white;
+        }
+
+        .btn-mic:hover {
+            background-color: #002244;
+        }
+
+        .btn-mic.listening {
+            background-color: #d9534f;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(217, 83, 79, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(217, 83, 79, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(217, 83, 79, 0); }
+        }
+
+        .transcription-box {
+            background: var(--card-bg);
+            padding: 20px;
+            border-top: 1px solid #eee;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .transcription-box h3 {
+            margin-top: 0;
+            color: var(--hkbu-blue);
+        }
+
+        .result-text {
+            font-size: 1.2rem;
+            min-height: 40px;
+            padding: 10px;
+            background: #f8f9fa;
+            border: 1px dashed #ccc;
+            border-radius: 4px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 6px;
+            padding: 15px;
+            border: 2px solid transparent;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .card.matched {
+            border-color: #5cb85c;
+            background-color: #f0fff0;
+        }
+
+        .card h4 {
+            margin: 0 0 8px 0;
+            color: var(--hkbu-blue);
+        }
+
+        .keywords {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .script-text {
+            font-size: 0.9rem;
+            line-height: 1.4;
+            color: #444;
+            background: #fafafa;
+            padding: 8px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .audio-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .audio-input-group input {
+            padding: 6px;
+            font-size: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        audio {
+            width: 100%;
+            height: 32px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>HKBU Robot Dog STT Test</h1>
+        <span id="stt-status" class="status-badge">STT Ready</span>
+    </header>
+
+    <div class="controls">
+        <button id="mic-btn" class="btn-mic" onclick="toggleListening()">🎤 Start Listening (Cantonese)</button>
+        <div id="listening-state">Click button to speak Cantonese keywords...</div>
+    </div>
+
+    <div class="transcription-box">
+        <h3>Recognized Speech (STT Result):</h3>
+        <div id="transcript" class="result-text">Waiting for input...</div>
+    </div>
+
+    <h2>Category 1: Graduate Attributes (GA)</h2>
+    <div id="ga-cards" class="grid"></div>
+
+    <h2>Category 2: Generative AI Principles</h2>
+    <div id="ai-cards" class="grid"></div>
+</div>
+
+<script>
+    // --- Data Definition Pre-filled with Google Drive Links ---
+    const scriptsData = [
+        // --- GA Level 1 Overview ---
+        { 
+            id: "ga_intro", 
+            cat: "ga", 
+            title: "📢 Level 1: GA Overview (全人教育簡介)", 
+            keywords: ["全人教育", "畢業特質", "Overview", "歡迎", "特質"], 
+            text: "「歡迎嚟到香港浸會大學！浸大以『全人教育』為理念，致力啟發同學嘅全人潛能。同學喺大學期間培養公民、知識、學習、創意、溝通、群體同埋康健七大畢業特質，就會成為全面發展、敢於創新的跨學科人才，積極回饋社會！想知多啲？歡迎問下我啦！」", 
+            driveUrl: "https://drive.google.com/file/d/18TBAK7FxhkbCkwo4G9wBNK_odxjWmn1c/view?usp=drive_link" 
+        },
+
+        // --- GA Level 2 Items ---
+        { 
+            id: "ga1", 
+            cat: "ga", 
+            title: "1. Citizenship (公民)", 
+            keywords: ["公民", "Citizenship"], 
+            text: "「『公民』特質係要培養同學嘅全球視野同職業道德。浸大透過海外實習同埋認識聯合國永續發展目標，讓同學理解國際社會關注嘅議題，提升喺跨國企業嘅競爭力。」", 
+            driveUrl: "https://drive.google.com/file/d/10TqPPZDKdMkTRfxV0czdMWeiUkxOU1tU/view?usp=drive_link" 
+        },
+        { 
+            id: "ga2", 
+            cat: "ga", 
+            title: "2. Knowledge (知識)", 
+            keywords: ["知識", "Knowledge"], 
+            text: "「『知識』特質講求主修專精同埋跨領域應用。浸大結合 AI 科技、科學同人文學科，訓練同學掌握業界最新嘅雙軌技能，適應多元化嘅職場需求。」", 
+            driveUrl: "https://drive.google.com/file/d/1Lf6riIzrSxQGq6LJr-xEaHXEnADetFAL/view?usp=drive_link" 
+        },
+        { 
+            id: "ga3", 
+            cat: "ga", 
+            title: "3. Learning (學習)", 
+            keywords: ["學習", "Learning"], 
+            text: "「『學習』特質著重善於反思、虛心同埋自主求學。浸大培養同學兼具人文同科技視野去解決問題，喺學期間累積處理複雜實務專案嘅經驗。」", 
+            driveUrl: "https://drive.google.com/file/d/13uthBnP72Z-yGSc1HG3Eu8IJT5k0QPcc/view?usp=drive_link" 
+        },
+        { 
+            id: "ga4", 
+            cat: "ga", 
+            title: "4. Creativity (創意)", 
+            keywords: ["創意", "Creativity"], 
+            text: "「『創意』特質強調具備創新同開拓精神。呢種主動求變同突破傳統嘅思維，可以協助同學喺未來任何行業靈活應對變局，推動突破同創新。」", 
+            driveUrl: "https://drive.google.com/file/d/1pOvL5cXc6QAeAmyhMrKVynzRyu-Hdz9h/view?usp=drive_link" 
+        },
+        { 
+            id: "ga5", 
+            cat: "ga", 
+            title: "5. Communication (溝通)", 
+            keywords: ["溝通", "Communication"], 
+            text: "「『溝通』特質強調同理心同埋多語言表達能力。浸大提供豐富嘅語文訓練同跨文化交流活動，提升同學喺職場同日常團隊中嘅溝通技巧。」", 
+            driveUrl: "https://drive.google.com/file/d/1nYK3iRdXsFKUNy9HdUIcnUyO0c_a8WUe/view?usp=drive_link" 
+        },
+        { 
+            id: "ga6", 
+            cat: "ga", 
+            title: "6. Teamwork (群體)", 
+            keywords: ["群體", "團隊", "Teamwork"], 
+            text: "「『群體』特質著重團隊協作，服務多元社群。呢樣可以鍛鍊同學嘅高效協作同人際適應力。面對 AI 轉型下嘅職場，能迅速融入唔同團隊，將人同技術順暢結合，創造不可替代嘅團隊生產力。」", 
+            driveUrl: "https://drive.google.com/file/d/1NXPQnAsoUg_14cmMLlD8O4x03ggX5wOK/view?usp=drive_link" 
+        },
+        { 
+            id: "ga7", 
+            cat: "ga", 
+            title: "7. Well-being (康健)", 
+            keywords: ["康健", "健康", "Well-being"], 
+            text: "「『康健』特質強調身、心、靈三個層面嘅均衡發展。同學喺大學期間培養強健體魄、建立情緒韌性，並確立個人價值同使命感。呢樣可以等佢哋喺面對職場挑戰時，依然保持內在平衡，實現永續嘅全人發展。」", 
+            driveUrl: "https://drive.google.com/file/d/1za95ro9yX4Sejrbh44j_PG9MKBduR9-Y/view?usp=drive_link" 
+        },
+
+        // --- GenAI Level 1 Overview ---
+        { 
+            id: "ai_intro", 
+            cat: "ai", 
+            title: "📢 Level 1: GenAI Overview (AI 原則簡介)", 
+            keywords: ["AI 原則", "生成式 AI", "AI 理念", "原則"], 
+            text: "「歡迎了解浸大嘅 AI 教學理念！浸大針對生成式 AI 制定咗四大教學同評核原則：AI 賦能、AI 批判、AI 倫理，同埋樹立人類獨特性！想知多一點？歡迎問下我啦！」", 
+            driveUrl: "https://drive.google.com/file/d/1Cr2-BVe5oA3kHh5Hp502zwfO47x7BOAB/view?usp=drive_link" 
+        },
+
+        // --- GenAI Level 2 Items ---
+        { 
+            id: "ai1", 
+            cat: "ai", 
+            title: "1. AI-Empowering (AI 賦能)", 
+            keywords: ["賦能", "Empowering", "第一個", "1"], 
+            text: "「『AI 賦能』原則旨在擁抱生成式 AI，賦能師生發揮 AI 工具嘅潛力，將佢融入大學嘅知識創造同教學生態系統之中。」", 
+            driveUrl: "https://drive.google.com/file/d/13iDfIUx1o6lMqAkNAHfwOy7_qAu788G6/view?usp=drive_link" 
+        },
+        { 
+            id: "ai2", 
+            cat: "ai", 
+            title: "2. AI-Critical (AI 批判)", 
+            keywords: ["批判", "Critical", "第二個", "2"], 
+            text: "「『AI 批判』原則旨在鼓勵對生成式 AI 保持健康、有理據嘅懷懷態度，培養師生批判性思考，並理解 AI 工具嘅優勢、缺點同局限。」", 
+            driveUrl: "https://drive.google.com/file/d/1FbNWnSTrMAMgZwpuOqAEIdx8giCN0Jr5/view?usp=drive_link" 
+        },
+        { 
+            id: "ai3", 
+            cat: "ai", 
+            title: "3. AI-Ethical (AI 倫理)", 
+            keywords: ["倫理", "Ethical", "第三個", "3"], 
+            text: "「『AI 倫理』原則旨在維護學術誠信、透明度，並確保負責任同埋符合倫理咁使用生成式 AI 工具。」", 
+            driveUrl: "https://drive.google.com/file/d/17HLin3SVGpueZyUmtRMYj4gFw12o3qCO/view?usp=drive_link" 
+        },
+        { 
+            id: "ai4", 
+            cat: "ai", 
+            title: "4. Build Human Uniqueness (樹立人類獨特性)", 
+            keywords: ["獨特性", "人類獨特性", "Uniqueness", "第四個", "4"], 
+            text: "「『樹立人類獨特性』原則旨在肯定師生作為具備獨特生活經驗、知識同技能嘅個人，並喺大學教學生態系統中提供空間同時間，讓每個人發掘並發展自身獨特嘅價值。」", 
+            driveUrl: "https://drive.google.com/file/d/1pSGLID0Y3EXE7DDRsKMIxnPDgpho5Ij6/view?usp=drive_link" 
+        }
+    ];
+
+    let recognition = null;
+    let isListening = false;
+
+    // --- Helper: Convert Google Drive Link to Direct Stream URL ---
+    function formatDriveUrl(url) {
+        if (!url) return "";
+        const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+        if (match && match[1]) {
+            return `https://drive.google.com/uc?export=download&id=${match[1]}`;
+        }
+        return url;
+    }
+
+    // --- Render Cards ---
+    function renderCards() {
+        const gaContainer = document.getElementById('ga-cards');
+        const aiContainer = document.getElementById('ai-cards');
+
+        scriptsData.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.id = `card-${item.id}`;
+            const streamUrl = formatDriveUrl(item.driveUrl);
+
+            card.innerHTML = `
+                <h4>${item.title}</h4>
+                <div class="keywords"><strong>Keywords:</strong> ${item.keywords.join(', ')}</div>
+                <div class="script-text">${item.text}</div>
+                <div class="audio-input-group">
+                    <input type="text" value="${item.driveUrl}" placeholder="Paste Google Drive Link here..." 
+                           onchange="updateAudioUrl('${item.id}', this.value)">
+                    <audio id="audio-${item.id}" src="${streamUrl}" controls></audio>
+                </div>
+            `;
+
+            if (item.cat === 'ga') {
+                gaContainer.appendChild(card);
+            } else {
+                aiContainer.appendChild(card);
+            }
+        });
+    }
+
+    function updateAudioUrl(id, rawUrl) {
+        const formattedUrl = formatDriveUrl(rawUrl);
+        const audioElement = document.getElementById(`audio-${id}`);
+        audioElement.src = formattedUrl;
+        
+        const found = scriptsData.find(item => item.id === id);
+        if (found) found.driveUrl = rawUrl;
+    }
+
+    // --- Web Speech API (STT Setup) ---
+    function setupSpeechRecognition() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            document.getElementById('stt-status').innerText = "STT Not Supported";
+            document.getElementById('stt-status').style.backgroundColor = "#d9534f";
+            alert("Web Speech API is not supported in this browser. Please use Google Chrome or Microsoft Edge.");
+            return;
+        }
+
+        recognition = new SpeechRecognition();
+        recognition.lang = 'zh-HK'; // Cantonese
+        recognition.continuous = true;
+        recognition.interimResults = true;
+
+        recognition.onstart = () => {
+            isListening = true;
+            document.getElementById('mic-btn').classList.add('listening');
+            document.getElementById('mic-btn').innerText = "🛑 Stop Listening";
+            document.getElementById('listening-state').innerText = "Listening for Cantonese speech...";
+        };
+
+        recognition.onend = () => {
+            isListening = false;
+            document.getElementById('mic-btn').classList.remove('listening');
+            document.getElementById('mic-btn').innerText = "🎤 Start Listening (Cantonese)";
+            document.getElementById('listening-state').innerText = "Stopped listening.";
+        };
+
+        recognition.onresult = (event) => {
+            let transcriptText = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                transcriptText += event.results[i][0].transcript;
+            }
+            
+            document.getElementById('transcript').innerText = transcriptText;
+            matchKeywords(transcriptText);
+        };
+
+        recognition.onerror = (event) => {
+            console.error("Speech Recognition Error: ", event.error);
+        };
+    }
+
+    function toggleListening() {
+        if (!recognition) return;
+        if (isListening) {
+            recognition.stop();
+        } else {
+            recognition.start();
+        }
+    }
+
+    // --- Keyword Matching & Audio Playback Engine ---
+    function matchKeywords(text) {
+        let matchedItem = null;
+
+        scriptsData.forEach(item => {
+            const cardElement = document.getElementById(`card-${item.id}`);
+            
+            const hasMatch = item.keywords.some(kw => text.toLowerCase().includes(kw.toLowerCase()));
+
+            if (hasMatch) {
+                cardElement.classList.add('matched');
+                if (!matchedItem) matchedItem = item;
+            } else {
+                cardElement.classList.remove('matched');
+            }
+        });
+
+        if (matchedItem) {
+            const audioElement = document.getElementById(`audio-${matchedItem.id}`);
+            if (audioElement && audioElement.src && audioElement.paused) {
+                audioElement.play().catch(e => console.log("Audio playback waiting for user interaction or loading:", e));
+            }
+        }
+    }
+
+    // --- Initialization ---
+    window.onload = () => {
+        renderCards();
+        setupSpeechRecognition();
+    };
+</script>
+
+</body>
+</html>
