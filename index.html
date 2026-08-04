@@ -336,25 +336,45 @@
         subtext.innerText = text;
     }
 
+    // --- Audio Queue Controller ---
+    function playAudioSequence(audioList, onComplete) {
+        if (!audioList || audioList.length === 0) {
+            if (onComplete) onComplete();
+            return;
+        }
+
+        const currentSrc = audioList.shift();
+        audioPlayer.src = currentSrc;
+        audioPlayer.play().catch(e => console.log("Audio playback error:", e));
+
+        audioPlayer.onended = () => {
+            playAudioSequence(audioList, onComplete);
+        };
+    }
+
     // --- Play Audio & Flow Controller ---
-    function playRobotResponse(item, customPromptText = "") {
+    function playRobotResponse(item, isFollowUpNeeded = false) {
         isRobotSpeaking = true;
         if (recognition) recognition.stop();
 
         setStatus("🐕 Speaking...", "speaking");
         highlightCard(item.id);
 
-        const fullText = item.text + (customPromptText ? " " + customPromptText : "");
-        addChatMessage("robot", fullText);
+        let chatText = item.text;
+        let playlist = [item.audioUrl];
 
-        audioPlayer.src = item.audioUrl;
-        audioPlayer.play().catch(e => console.log("Audio playback error:", e));
+        if (isFollowUpNeeded) {
+            chatText += " 你仲想了解邊一項，定係想結束呢？";
+            playlist.push("prompt_followup.mp3");
+        }
 
-        audioPlayer.onended = () => {
+        addChatMessage("robot", chatText);
+
+        playAudioSequence(playlist, () => {
             isRobotSpeaking = false;
             setStatus("🎙️ Listening...", "listening");
             startSpeechRecognition();
-        };
+        });
     }
 
     // --- Speech Recognition Engine ---
@@ -398,14 +418,14 @@
     function processUserInput(userSpeech) {
         addChatMessage("user", userSpeech);
 
-        // Check if user wants to end or switch mode
+        // 1. Check if user wants to end or switch mode
         const isEndCall = endKeywords.some(kw => userSpeech.toLowerCase().includes(kw));
         if (isEndCall) {
             switchMode();
             return;
         }
 
-        // Match against current category items
+        // 2. Match against current category items
         const matchingItem = scriptsData.find(item => 
             item.cat === currentMode && 
             item.level === 2 && 
@@ -413,11 +433,21 @@
         );
 
         if (matchingItem) {
-            const promptFollowUp = "你仲想了解邊一項，定係想結束呢？";
-            playRobotResponse(matchingItem, promptFollowUp);
+            playRobotResponse(matchingItem, true);
         } else {
-            // Unrecognized keyword
-            addChatMessage("robot", "我未好聽得清，你可以再講多一次想了解邊一個項目，或者講『下一個』切換主題！");
+            // Unrecognized keyword: play retry MP3 sequence
+            isRobotSpeaking = true;
+            if (recognition) recognition.stop();
+
+            setStatus("🐕 Speaking...", "speaking");
+            const retryText = "我未好聽得清，你可以再講多一次想了解邊一個項目，或者講『下一個』切換主題！";
+            addChatMessage("robot", retryText);
+
+            playAudioSequence(["prompt_retry.mp3"], () => {
+                isRobotSpeaking = false;
+                setStatus("🎙️ Listening...", "listening");
+                startSpeechRecognition();
+            });
         }
     }
 
