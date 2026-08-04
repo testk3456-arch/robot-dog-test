@@ -282,6 +282,9 @@
     // End / Next keywords in Cantonese
     const endKeywords = ["完", "拜拜", "下一個", "冇啦", "結束", "next", "bye", "完結"];
 
+    // Random selection trigger keywords in Cantonese/English
+    const randomKeywords = ["是但", "是旦", "隨意", "求其", "無所謂", "亂嚟", "任意", "random", "anything", "whatever"];
+
     // System States
     let currentMode = "ga"; // 'ga' or 'ai'
     let recognition = null;
@@ -425,7 +428,18 @@
             return;
         }
 
-        // 2. Match against current category items
+        // 2. Check if user asks for a random selection ("是但", "隨意", "求其", etc.)
+        const isRandomRequest = randomKeywords.some(kw => userSpeech.toLowerCase().includes(kw.toLowerCase()));
+        if (isRandomRequest) {
+            const level2Items = scriptsData.filter(item => item.cat === currentMode && item.level === 2);
+            if (level2Items.length > 0) {
+                const randomItem = level2Items[Math.floor(Math.random() * level2Items.length)];
+                playRobotResponse(randomItem, true);
+                return;
+            }
+        }
+
+        // 3. Match against current category items via keywords
         const matchingItem = scriptsData.find(item => 
             item.cat === currentMode && 
             item.level === 2 && 
