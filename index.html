@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-HK">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HKBU Robot Dog Interactive Voice Experience</title>
+    <title>HKBU Robot Dog Interactive Experience</title>
     <style>
         :root {
             --hkbu-blue: #003366;
@@ -14,15 +14,12 @@
             --chat-robot: #ffffff;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg-color);
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -35,13 +32,9 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        header h1 {
-            margin: 0;
-            font-size: 1.2rem;
-        }
+        header h1 { margin: 0; font-size: 1.2rem; }
 
         .status-badge {
             padding: 6px 14px;
@@ -50,32 +43,17 @@
             font-weight: bold;
             background-color: #6c757d;
             color: white;
-            transition: all 0.3s ease;
         }
 
-        .status-badge.listening {
-            background-color: #28a745;
-            animation: pulse 1.5s infinite;
-        }
+        .status-badge.listening { background-color: #28a745; }
+        .status-badge.speaking { background-color: var(--hkbu-gold); }
 
-        .status-badge.speaking {
-            background-color: var(--hkbu-gold);
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
-        }
-
-        /* Main 2-Column Split Layout */
         .main-container {
             display: flex;
             flex: 1;
             overflow: hidden;
         }
 
-        /* Left Column: Chat Window */
         .chat-section {
             width: 45%;
             background: #e5ddd5;
@@ -94,8 +72,7 @@
         }
 
         .robot-avatar {
-            width: 40px;
-            height: 40px;
+            width: 40px; height: 40px;
             border-radius: 50%;
             background: var(--hkbu-blue);
             color: white;
@@ -121,33 +98,11 @@
             font-size: 0.95rem;
             line-height: 1.4;
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-            word-wrap: break-word;
         }
 
-        .message.robot {
-            background: var(--chat-robot);
-            align-self: flex-start;
-            border-bottom-left-radius: 2px;
-        }
+        .message.robot { background: var(--chat-robot); align-self: flex-start; }
+        .message.user { background: var(--chat-user); align-self: flex-end; }
 
-        .message.user {
-            background: var(--chat-user);
-            align-self: flex-end;
-            border-bottom-right-radius: 2px;
-        }
-
-        .chat-input-bar {
-            background: #f0f0f0;
-            padding: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-top: 1px solid #ddd;
-            font-size: 0.9rem;
-            color: #555;
-        }
-
-        /* Right Column: Hierarchy Panel */
         .hierarchy-section {
             width: 55%;
             padding: 20px;
@@ -168,47 +123,22 @@
             padding: 14px;
             border: 2px solid transparent;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
         }
 
-        .card.active {
-            border-color: #28a745;
-            background-color: #f0fff0;
-            transform: scale(1.02);
-            box-shadow: 0 4px 12px rgba(40,167,69,0.2);
-        }
-
-        .card h4 {
-            margin: 0 0 6px 0;
-            color: var(--hkbu-blue);
-        }
-
-        .keywords {
-            font-size: 0.8rem;
-            color: #666;
-            margin-bottom: 8px;
-        }
-
-        .script-text {
-            font-size: 0.85rem;
-            color: #444;
-            line-height: 1.3;
-        }
-
-        audio {
-            display: none; /* Audio elements play invisibly in background */
-        }
+        .card h4 { margin: 0 0 6px 0; color: var(--hkbu-blue); }
+        .keywords { font-size: 0.8rem; color: #666; margin-bottom: 8px; }
+        .script-text { font-size: 0.85rem; color: #444; }
+        audio { display: none; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>🤖 HKBU Robot Dog Face-to-Face Voice Experience</h1>
+    <h1>🤖 HKBU Robot Dog Voice Experience</h1>
     <span id="system-status" class="status-badge">Initializing...</span>
 </header>
 
 <div class="main-container">
-    <!-- Left Hand Side: WhatsApp-style Face-to-Face Chatbot -->
     <div class="chat-section">
         <div class="chat-header">
             <div class="robot-avatar">🐕</div>
@@ -218,188 +148,228 @@
             </div>
         </div>
 
-        <div id="chat-messages" class="chat-messages">
-            <!-- Messages stream here dynamically -->
-        </div>
+        <div id="chat-messages" class="chat-messages"></div>
 
-        <div class="chat-input-bar" id="input-status-bar">
-            🎙️ Hands-Free Mode Active. Speak directly into your microphone...
+        <div style="padding:12px; background:#f0f0f0; text-align:center; font-size:0.9rem; color:#555;">
+            🎙️ Hands-Free Voice Experience
         </div>
     </div>
 
-    <!-- Right Hand Side: Active Component Hierarchy Display -->
     <div class="hierarchy-section">
-        <h2>Category 1: Graduate Attributes (GA)</h2>
+        <h2>Graduate Attributes (GAs)</h2>
         <div id="ga-cards" class="grid"></div>
 
-        <h2>Category 2: Generative AI Principles</h2>
+        <h2>Generative AI Principles</h2>
         <div id="ai-cards" class="grid"></div>
     </div>
 </div>
 
-<!-- Audio Player Tag -->
 <audio id="global-audio-player"></audio>
 
 <script>
-    // --- Data Model ---
     const scriptsData = [
         // Level 1 Overviews
         { 
-            id: "ga_intro", 
-            cat: "ga", 
-            level: 1,
-            title: "📢 Level 1: GA Overview (全人教育簡介)", 
-            keywords: ["全人教育", "畢業生特質", "overview", "歡迎", "特質", "ga", "graduate attributes"], 
-            text: "歡迎嚟到香港浸會大學！浸大以『全人教育』為理念，致力啟發同學嘅全人潛能。同學喺大學期間培養公民、知識、學習、創意、溝通、群體同埋康健七大畢業生特質，就會成為全面發展、敢於創新嘅跨學科人才，積極回饋社會！話我知你想知多啲邊個特質！", 
+            id: "ga_intro_zh", cat: "ga", lang: "zh", level: 1,
+            title: "📢 Level 1: GA Overview (中文)", 
+            keywords: ["全人教育", "畢業生特質", "overview", "歡迎", "特質", "ga"], 
+            text: "歡迎嚟到香港浸會大學！浸大以『全人教育』為理念，致力啟發同學嘅全人潛能。同學喺大學期間培養公民、知識、學習、創意、溝通、群體同埋康健七大畢業生特質，就會成為全面發展、敢於創新嘅跨學科人才！", 
             audioUrl: "level1_ga.mp3" 
         },
         { 
-            id: "ai_intro", 
-            cat: "ai", 
-            level: 1,
-            title: "📢 Level 1: GenAI Overview (AI 原則簡介)", 
-            keywords: ["人工智能原則", "生成式人工智能", "人工智能理念", "原則", "ai", "genai", "generative ai"], 
-            text: "歡迎了解浸大嘅人工智能教學理念！浸大針對生成式人工智能制定咗四大教學同評核原則：包括人工智能賦能、人工智能批判、人工智能倫理，同埋樹立人類獨特性！可以問下我，再話多啲比你知！", 
-            audioUrl: "level1_genai.mp3" 
+            id: "ga_intro_en", cat: "ga", lang: "en", level: 1,
+            title: "📢 Level 1: GA Overview (English)", 
+            keywords: ["graduate attributes", "whole person", "education", "overview", "welcome"], 
+            text: "Welcome to HKBU! Education at HKBU aims to unlock students’ potential through 7 Graduate Attributes: Citizenship, Knowledge, Learning, Creativity, Communication, Teamwork, and Well-being. Tell me which one you'd like to learn more about!", 
+            audioUrl: "level1_ga_en.mp3" 
+        },
+        { 
+            id: "ai_intro_en", cat: "ai", lang: "en", level: 1,
+            title: "📢 Level 1: GenAI Overview (English)", 
+            keywords: ["ai principles", "generative ai", "ai", "genai", "overview"], 
+            text: "Welcome to HKBU’s Generative AI Principles! We focus on four key values: AI-Empowering, AI-Critical, AI-Ethical, and Building Human Uniqueness. Ask me to find out more!", 
+            audioUrl: "level1_genai_en.mp3" 
         },
 
-        // GA Level 2 Items (Strictly unique, non-number keywords)
+        // --- GA Level 2 Items (Chinese Mode) ---
         { 
-            id: "ga1", 
-            cat: "ga", 
-            level: 2, 
+            id: "ga1_zh", cat: "ga", lang: "zh", level: 2, 
             title: "1. Citizenship (公民)", 
-            keywords: ["公民", "citizenship", "全球思維", "全球", "道德責任", "海外交流", "交流", "聯合國", "sdg", "永續發展", "國際", "企業競爭力"], 
-            text: "『公民』特質係要培養同學嘅全球思維同道德責任。透過海外交流同埋認識聯合國永續發展目標，讓同學理解國際社會關注嘅議題，提升喺企業嘅競爭力。", 
+            keywords: ["公民", "citizenship", "全球思維", "全球", "道德責任", "sdg", "永續發展"], 
+            text: "具備全球思維，肩負道德責任，致力於可持續發展。", 
             audioUrl: "ga_1_citizenship.mp3" 
         },
         { 
-            id: "ga2", 
-            cat: "ga", 
-            level: 2, 
+            id: "ga2_zh", cat: "ga", lang: "zh", level: 2, 
             title: "2. Knowledge (知識)", 
-            keywords: ["知識", "knowledge", "主修", "跨學科", "學科", "人文", "技能", "業界", "多元化"], 
-            text: "『知識』特質講求精通主修學科同埋跨學科知識。結合科技同人文學科，訓練同學掌握業界最新嘅技能，適應多元化嘅需求。", 
+            keywords: ["知識", "knowledge", "主修", "跨學科", "學科", "技能"], 
+            text: "精通學科及跨學科知識。", 
             audioUrl: "ga_2_knowledge.mp3" 
         },
         { 
-            id: "ga3", 
-            cat: "ga", 
-            level: 2, 
+            id: "ga3_zh", cat: "ga", lang: "zh", level: 2, 
             title: "3. Learning (學習)", 
-            keywords: ["學習", "learning", "反思", "虛心", "自主", "求學", "學術", "解決問題", "研究"], 
-            text: "『學習』特質著重善於反思、虛心同埋自主求學。培養同學兼具人文同科技視野去解決問題。", 
+            keywords: ["學習", "learning", "反思", "虛心", "自主", "求學", "解決問題"], 
+            text: "善於反思、虛心、自主求學，以兼具人文和科技的視野解決問題。", 
             audioUrl: "ga_3_learning.mp3" 
         },
         { 
-            id: "ga4", 
-            cat: "ga", 
-            level: 2, 
+            id: "ga4_zh", cat: "ga", lang: "zh", level: 2, 
             title: "4. Creativity (創意)", 
-            keywords: ["創意", "creativity", "創新", "開拓", "求變", "突破", "傳統", "靈活", "變局", "發明"], 
-            text: "『創意』特質強調創新同開拓精神。呢種主動求變同突破傳統嘅思維，可以協助同學喺未來任何行業靈活應對變局，推動突破同創新。", 
+            keywords: ["創意", "creativity", "創新", "開拓"], 
+            text: "具創新和開拓精神。", 
             audioUrl: "ga_4_creativity.mp3" 
         },
         { 
-            id: "ga5", 
-            cat: "ga", 
-            level: 2, 
+            id: "ga5_zh", cat: "ga", lang: "zh", level: 2, 
             title: "5. Communication (溝通)", 
-            keywords: ["溝通", "communication", "同理心", "語言", "表達", "語文", "跨文化", "對話", "說話"], 
-            text: "『溝通』特質強調同理心同多種語言表達能技巧。浸大提供豐富嘅語文訓練同跨文化交流活動，提升同學喺職場同日常團隊中嘅溝通能力。", 
+            keywords: ["溝通", "communication", "同理心", "語言", "表達", "對話"], 
+            text: "富有同理心，有效地以多種語言及方式溝通。", 
             audioUrl: "ga_5_communication.mp3" 
         },
         { 
-            id: "ga6", 
-            cat: "ga", 
-            level: 2, 
+            id: "ga6_zh", cat: "ga", lang: "zh", level: 2, 
             title: "6. Teamwork (群體)", 
-            keywords: ["群體", "團隊", "teamwork", "協作", "合作", "多元社群", "社群", "人際", "適應力", "生產力"], 
-            text: "『群體』特質著重團隊協作，服務多元社群。鍛鍊同學嘅人際適應力。迅速融入唔同團隊，創造不可替代嘅團隊生產力。", 
+            keywords: ["群體", "團隊", "teamwork", "協作", "合作", "社群"], 
+            text: "團隊協作，服務多元社群。", 
             audioUrl: "ga_6_teamwork.mp3" 
         },
         { 
-            id: "ga7", 
-            cat: "ga", 
-            level: 2, 
+            id: "ga7_zh", cat: "ga", lang: "zh", level: 2, 
             title: "7. Well-being (康健)", 
-            keywords: ["康健", "健康", "well-being", "wellbeing", "身心", "心靈", "體魄", "情緒", "韌性", "價值", "使命感", "內在平衡", "壓力"], 
-            text: "『康健』特質強調身、心、靈三個層面嘅均衡發展。同學喺大學期間培養強健體魄、建立情緒韌性，確立個人價值同使命感。未來喺面對職場挑戰時，依然可以保持內在平衡。", 
+            keywords: ["康健", "健康", "well-being", "wellbeing", "身心", "心靈", "體魄"], 
+            text: "身心靈健康。", 
             audioUrl: "ga_7_wellbeing.mp3" 
         },
 
-        // GenAI Level 2 Items (Strictly unique, non-number keywords)
+        // --- GA Level 2 Items (English Mode) ---
         { 
-            id: "ai1", 
-            cat: "ai", 
-            level: 2, 
-            title: "1. AI-Empowering (AI 賦能)", 
-            keywords: ["賦能", "empowering", "empower", "擁抱", "潛力", "創造", "教學生態", "應用"], 
-            text: "『人工智能賦能』原則旨在擁抱生成式人工智能，賦能師生發揮人工智能嘅潛力，將佢融入大學嘅知識創造同教學生態之中。", 
-            audioUrl: "ai_1_empowering.mp3" 
+            id: "ga1_en", cat: "ga", lang: "en", level: 2, 
+            title: "1. Citizenship", 
+            keywords: ["citizenship", "citizen", "global", "ethically", "sustainability", "sustainable"], 
+            text: "Be globally minded, ethically responsible and committed to sustainability.", 
+            audioUrl: "ga_1_citizenship_en.mp3" 
         },
         { 
-            id: "ai2", 
-            cat: "ai", 
-            level: 2, 
-            title: "2. AI-Critical (AI 批判)", 
-            keywords: ["批判", "critical", "懷疑", "批判性思考", "思考", "優勢", "缺點", "局限", "限制", "真偽", "驗證"], 
-            text: "『人工智能批判』原則旨在鼓勵對生成式人工智能保持健康、有理據嘅懷疑態度，培養師生批判性思考，同埋理解人工智能嘅優勢、缺點同局限。", 
-            audioUrl: "ai_2_critical.mp3" 
+            id: "ga2_en", cat: "ga", lang: "en", level: 2, 
+            title: "2. Knowledge", 
+            keywords: ["knowledge", "disciplinary", "transdisciplinary", "skills", "subject"], 
+            text: "Be well-versed in disciplinary and transdisciplinary knowledge.", 
+            audioUrl: "ga_2_knowledge_en.mp3" 
         },
         { 
-            id: "ai3", 
-            cat: "ai", 
-            level: 2, 
-            title: "3. AI-Ethical (AI 倫理)", 
-            keywords: ["倫理", "ethical", "ethics", "學術誠信", "誠信", "透明度", "透明", "抄襲", "規矩"], 
-            text: "『人工智能倫理』原則旨在維護學術誠信同透明度，喺合符倫理嘅狀況下使用生成式人工智能。", 
-            audioUrl: "ai_3_ethical.mp3" 
+            id: "ga3_en", cat: "ga", lang: "en", level: 2, 
+            title: "3. Learning", 
+            keywords: ["learning", "learn", "reflective", "inquisitive", "independent", "problem", "solvers"], 
+            text: "Be reflective, inquisitive independent learners and problem-solvers with humanistic and technological perspectives.", 
+            audioUrl: "ga_3_learning_en.mp3" 
         },
         { 
-            id: "ai4", 
-            cat: "ai", 
-            level: 2, 
-            title: "4. Build Human Uniqueness (樹立人類獨特性)", 
-            keywords: ["獨特性", "人類獨特性", "uniqueness", "unique", "人類", "獨特", "經驗", "不可替代", "以人為本"], 
-            text: "『樹立人類獨特性』原則旨在肯定師生嘅獨特經驗、知識同技能，喺大學教學生態系統中提供空間同時間，讓每個人發掘同發展自身嘅獨特價值。", 
-            audioUrl: "ai_4_uniqueness.mp3" 
+            id: "ga4_en", cat: "ga", lang: "en", level: 2, 
+            title: "4. Creativity", 
+            keywords: ["creativity", "creative", "entrepreneurial", "innovation"], 
+            text: "Be creative and entrepreneurial.", 
+            audioUrl: "ga_4_creativity_en.mp3" 
+        },
+        { 
+            id: "ga5_en", cat: "ga", lang: "en", level: 2, 
+            title: "5. Communication", 
+            keywords: ["communication", "communicate", "languages", "modalities", "empathetically"], 
+            text: "Communicate in multiple languages and modalities effectively and empathetically.", 
+            audioUrl: "ga_5_communication_en.mp3" 
+        },
+        { 
+            id: "ga6_en", cat: "ga", lang: "en", level: 2, 
+            title: "6. Teamwork", 
+            keywords: ["teamwork", "team", "collaborate", "serve", "diverse"], 
+            text: "Collaborate and serve with and for diverse groups of people.", 
+            audioUrl: "ga_6_teamwork_en.mp3" 
+        },
+        { 
+            id: "ga7_en", cat: "ga", lang: "en", level: 2, 
+            title: "7. Well-being", 
+            keywords: ["wellbeing", "well-being", "physically", "mentally", "spiritually", "health"], 
+            text: "Be well physically, mentally and spiritually.", 
+            audioUrl: "ga_7_wellbeing_en.mp3" 
+        },
+
+        // --- GenAI Level 2 Items (English Mode) ---
+        { 
+            id: "ai1_en", cat: "ai", lang: "en", level: 2, 
+            title: "1. AI-Empowering", 
+            keywords: ["empowering", "empower", "realise", "potential", "creation", "ecosystem"], 
+            text: "To embrace generative AI and empower students and instructors to realise the potential of generative AI tools as part of the university’s knowledge creation and teaching and learning ecosystem.", 
+            audioUrl: "ai_1_empowering_en.mp3" 
+        },
+        { 
+            id: "ai2_en", cat: "ai", lang: "en", level: 2, 
+            title: "2. AI-Critical", 
+            keywords: ["critical", "scepticism", "thinking", "strengths", "drawbacks", "limitations"], 
+            text: "To encourage healthy, informed scepticism of generative AI and develop students’ and instructors’ critical thinking and awareness of the strengths, drawbacks and limitations of generative AI tools.", 
+            audioUrl: "ai_2_critical_en.mp3" 
+        },
+        { 
+            id: "ai3_en", cat: "ai", lang: "en", level: 2, 
+            title: "3. AI-Ethical", 
+            keywords: ["ethical", "ethics", "integrity", "transparency", "academic"], 
+            text: "To maintain academic integrity, transparency and the ethical use of generative AI tools.", 
+            audioUrl: "ai_3_ethical_en.mp3" 
+        },
+        { 
+            id: "ai4_en", cat: "ai", lang: "en", level: 2, 
+            title: "4. Build Human Uniqueness", 
+            keywords: ["uniqueness", "unique", "human", "individuals", "lived experiences", "skills"], 
+            text: "To recognise the importance of students and instructors as unique individuals with lived experiences, knowledge, skills and attributes. Provide space and time for individuals to understand and develop themselves as unique individuals.", 
+            audioUrl: "ai_4_uniqueness_en.mp3" 
         }
     ];
 
-    // End / Next keywords in Cantonese
-    const endKeywords = ["完", "拜拜", "下一個", "冇啦", "結束", "next", "bye", "完結", "切換", "轉主題"];
+    // Dictionary of Exit Responses per Mode
+    const goodbyeResponses = {
+        "ga_intro_zh": {
+            audio: "prompt_goodbye_zh.mp3",
+            text: "多謝參與！希望你對浸大嘅畢業生特質有更多了解，拜拜！"
+        },
+        "ga_intro_en": {
+            audio: "prompt_goodbye_ga_en.mp3",
+            text: "Thank you! Hope you enjoyed learning about HKBU Graduate Attributes. Goodbye!"
+        },
+        "ai_intro_en": {
+            audio: "prompt_goodbye_ai_en.mp3",
+            text: "Thank you! Hope you found the Generative AI Principles helpful. Goodbye!"
+        }
+    };
 
-    // Random selection trigger keywords in Cantonese/English
-    const randomKeywords = ["是但", "是旦", "隨意", "求其", "無所謂", "亂嚟", "任意", "random", "anything", "whatever", "求便", "求其講"];
+    const endKeywords = ["完", "拜拜", "下一個", "結束", "next", "bye", "exit", "finish", "done", "byebye", "goodbye"];
+    const randomKeywords = ["是但", "隨意", "求其", "random", "anything", "whatever"];
 
-    // System States
-    let currentMode = "ga"; // 'ga' or 'ai'
-    let recognition = null;
+    const modesSequence = ["ga_intro_zh", "ga_intro_en", "ai_intro_en"];
+    let currentModeIndex = 0;
+    let failedAttempts = 0;
     let isRobotSpeaking = false;
-    let failedAttempts = 0; // Track consecutive unrecognized user inputs
+    let recognition = null;
     const audioPlayer = document.getElementById('global-audio-player');
 
-    // --- Render Hierarchy Cards ---
     function renderHierarchy() {
         const gaContainer = document.getElementById('ga-cards');
         const aiContainer = document.getElementById('ai-cards');
 
         scriptsData.forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.id = `card-${item.id}`;
-            card.innerHTML = `
-                <h4>${item.title}</h4>
-                <div class="keywords"><strong>Keywords:</strong> ${item.keywords.join(', ')}</div>
-                <div class="script-text">${item.text}</div>
-            `;
-            if (item.cat === 'ga') gaContainer.appendChild(card);
-            else aiContainer.appendChild(card);
+            if (item.level === 2) {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.id = `card-${item.id}`;
+                card.innerHTML = `
+                    <h4>${item.title} <small>(${item.lang.toUpperCase()})</small></h4>
+                    <div class="keywords"><strong>Keywords:</strong> ${item.keywords.join(', ')}</div>
+                    <div class="script-text">${item.text}</div>
+                `;
+                if (item.cat === 'ga') gaContainer.appendChild(card);
+                else aiContainer.appendChild(card);
+            }
         });
     }
 
-    // --- UI Helper Functions ---
     function addChatMessage(sender, text) {
         const chatContainer = document.getElementById('chat-messages');
         const msg = document.createElement('div');
@@ -409,63 +379,42 @@
         chatContainer.scrollTop = chatContainer.scrollHeight;
     }
 
-    function highlightCard(itemId) {
-        document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
-        if (itemId) {
-            const activeCard = document.getElementById(`card-${itemId}`);
-            if (activeCard) {
-                activeCard.classList.add('active');
-                activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-        }
-    }
-
     function setStatus(text, stateClass) {
         const badge = document.getElementById('system-status');
-        const subtext = document.getElementById('robot-subtext');
         badge.innerText = text;
         badge.className = `status-badge ${stateClass}`;
-        subtext.innerText = text;
     }
 
-    // --- Audio Queue Controller ---
     function playAudioSequence(audioList, onComplete) {
         if (!audioList || audioList.length === 0) {
             if (onComplete) onComplete();
             return;
         }
-
         const currentSrc = audioList.shift();
         audioPlayer.src = currentSrc;
-        audioPlayer.play().catch(e => console.log("Audio playback error:", e));
+        audioPlayer.play().catch(e => console.log("Audio play error:", e));
 
-        audioPlayer.onended = () => {
-            playAudioSequence(audioList, onComplete);
-        };
+        audioPlayer.onended = () => playAudioSequence(audioList, onComplete);
     }
 
-    // --- Play Audio & Flow Controller ---
-    function playRobotResponse(item, isFollowUpNeeded = false, prefixText = "", extraAudioPrefix = null) {
+    function playRobotResponse(item, isFollowUp = false, extraPrefix = null) {
         isRobotSpeaking = true;
         if (recognition) recognition.stop();
 
         setStatus("🐕 Speaking...", "speaking");
-        highlightCard(item.id);
-
-        let chatText = prefixText + item.text;
         let playlist = [];
 
-        if (extraAudioPrefix) {
-            playlist.push(extraAudioPrefix);
-        }
+        if (extraPrefix) playlist.push(extraPrefix);
         playlist.push(item.audioUrl);
 
-        if (isFollowUpNeeded) {
-            chatText += " 你仲想了解邊一項，定係想結束呢？";
-            playlist.push("prompt_followup.mp3");
+        let activeIntro = scriptsData.find(i => i.id === modesSequence[currentModeIndex]);
+        let lang = activeIntro.lang;
+
+        if (isFollowUp) {
+            playlist.push(lang === "en" ? "prompt_followup_en.mp3" : "prompt_followup.mp3");
         }
 
-        addChatMessage("robot", chatText);
+        addChatMessage("robot", item.text);
 
         playAudioSequence(playlist, () => {
             isRobotSpeaking = false;
@@ -474,103 +423,74 @@
         });
     }
 
-    // Helper: Select and play a random Level 2 item from current mode
-    function triggerRandomLevel2(prefixText = "", extraAudioPrefix = null) {
-        const level2Items = scriptsData.filter(item => item.cat === currentMode && item.level === 2);
-        if (level2Items.length > 0) {
-            const randomItem = level2Items[Math.floor(Math.random() * level2Items.length)];
-            playRobotResponse(randomItem, true, prefixText, extraAudioPrefix);
-        }
+    function triggerRandomLevel2(extraAudioPrefix = null) {
+        let activeIntro = scriptsData.find(i => i.id === modesSequence[currentModeIndex]);
+        let level2Items = scriptsData.filter(item => 
+            item.cat === activeIntro.cat && 
+            item.lang === activeIntro.lang && 
+            item.level === 2
+        );
+        let randomItem = level2Items[Math.floor(Math.random() * level2Items.length)];
+        playRobotResponse(randomItem, true, extraAudioPrefix);
     }
 
-    // --- Speech Recognition Engine ---
-    function startSpeechRecognition() {
-        if (isRobotSpeaking) return;
+    function handleGoodbyeAndSwitch() {
+        isRobotSpeaking = true;
+        if (recognition) recognition.stop();
 
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) {
-            setStatus("STT Not Supported", "");
-            return;
-        }
+        let currentModeKey = modesSequence[currentModeIndex];
+        let exitData = goodbyeResponses[currentModeKey];
 
-        if (!recognition) {
-            recognition = new SpeechRecognition();
-            recognition.lang = 'zh-HK';
-            recognition.continuous = true;
-            recognition.interimResults = false;
+        setStatus("🐕 Speaking...", "speaking");
+        addChatMessage("robot", exitData.text);
 
-            recognition.onresult = (event) => {
-                const transcript = event.results[event.results.length - 1][0].transcript.trim();
-                if (transcript) {
-                    processUserInput(transcript);
-                }
-            };
-
-            recognition.onend = () => {
-                // Auto-restart recognition if robot isn't speaking
-                if (!isRobotSpeaking) {
-                    try { recognition.start(); } catch(e){}
-                }
-            };
-        }
-
-        try {
-            recognition.start();
-            setStatus("🎙️ Listening...", "listening");
-        } catch(e) {}
+        playAudioSequence([exitData.audio], () => {
+            isRobotSpeaking = false;
+            switchMode();
+        });
     }
 
-    // --- Dialogue Logic Processor ---
     function processUserInput(userSpeech) {
         addChatMessage("user", userSpeech);
 
-        // 1. Check if user wants to end or switch mode
-        const isEndCall = endKeywords.some(kw => userSpeech.toLowerCase().includes(kw.toLowerCase()));
-        if (isEndCall) {
-            failedAttempts = 0; // Reset counter on valid command
-            switchMode();
+        let activeIntro = scriptsData.find(i => i.id === modesSequence[currentModeIndex]);
+        let lang = activeIntro.lang;
+
+        // Check for exit / goodbye keywords
+        if (endKeywords.some(kw => userSpeech.toLowerCase().includes(kw))) {
+            failedAttempts = 0;
+            handleGoodbyeAndSwitch();
             return;
         }
 
-        // 2. Check if user asks for a random selection ("是但", "隨意", "求其", etc.)
-        const isRandomRequest = randomKeywords.some(kw => userSpeech.toLowerCase().includes(kw.toLowerCase()));
-        if (isRandomRequest) {
-            failedAttempts = 0; // Reset counter on valid command
+        if (randomKeywords.some(kw => userSpeech.toLowerCase().includes(kw))) {
+            failedAttempts = 0;
             triggerRandomLevel2();
             return;
         }
 
-        // 3. Match against current category items via keywords
-        const matchingItem = scriptsData.find(item => 
-            item.cat === currentMode && 
+        let matchingItem = scriptsData.find(item => 
+            item.cat === activeIntro.cat && 
+            item.lang === activeIntro.lang && 
             item.level === 2 && 
-            item.keywords.some(kw => userSpeech.toLowerCase().includes(kw.toLowerCase()))
+            item.keywords.some(kw => userSpeech.toLowerCase().includes(kw))
         );
 
         if (matchingItem) {
-            failedAttempts = 0; // Reset counter on successful keyword match
+            failedAttempts = 0;
             playRobotResponse(matchingItem, true);
         } else {
-            // Unrecognized keyword handling
             failedAttempts++;
-
             if (failedAttempts >= 2) {
-                // Limit reached (2nd failed attempt): State unrecognized and transition to random topic
-                failedAttempts = 0; // Reset counter
-                
-                const fallbackIntroText = "我仲係聽唔太清，不如等我隨機為你介紹其中一個項目啦！";
-                triggerRandomLevel2(fallbackIntroText, "prompt_fallback_random.mp3");
-
+                failedAttempts = 0;
+                let fallbackAudio = lang === "en" ? "prompt_fallback_random_en.mp3" : "prompt_fallback_random.mp3";
+                triggerRandomLevel2(fallbackAudio);
             } else {
-                // 1st failed attempt: Ask user to repeat / clarify
                 isRobotSpeaking = true;
                 if (recognition) recognition.stop();
-
                 setStatus("🐕 Speaking...", "speaking");
-                const retryText = "我未好聽得清，你可以再講多一次想了解邊一個項目，或者講『下一個』切換主題！";
-                addChatMessage("robot", retryText);
-
-                playAudioSequence(["prompt_retry.mp3"], () => {
+                let retryAudio = lang === "en" ? "prompt_retry_en.mp3" : "prompt_retry.mp3";
+                playAudioSequence([retryAudio], () => {
                     isRobotSpeaking = false;
                     setStatus("🎙️ Listening...", "listening");
                     startSpeechRecognition();
@@ -579,38 +499,47 @@
         }
     }
 
-    // --- Switch between GA and GenAI Mode ---
     function switchMode() {
-        failedAttempts = 0; // Reset counter on mode switch
-        if (currentMode === "ga") {
-            currentMode = "ai";
-            const introAI = scriptsData.find(i => i.id === "ai_intro");
-            playRobotResponse(introAI);
-        } else {
-            currentMode = "ga";
-            const introGA = scriptsData.find(i => i.id === "ga_intro");
-            playRobotResponse(introGA);
-        }
+        currentModeIndex = (currentModeIndex + 1) % modesSequence.length;
+        let introItem = scriptsData.find(i => i.id === modesSequence[currentModeIndex]);
+        playRobotResponse(introItem);
     }
 
-    // --- Auto Start Experience on Page Load ---
+    function startSpeechRecognition() {
+        if (isRobotSpeaking) return;
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) return;
+
+        if (!recognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = false;
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[event.results.length - 1][0].transcript.trim();
+                if (transcript) processUserInput(transcript);
+            };
+
+            recognition.onend = () => {
+                if (!isRobotSpeaking) {
+                    try { recognition.start(); } catch(e){}
+                }
+            };
+        }
+
+        try {
+            let activeIntro = scriptsData.find(i => i.id === modesSequence[currentModeIndex]);
+            recognition.lang = activeIntro.lang === "en" ? 'en-US' : 'zh-HK';
+            recognition.start();
+            setStatus("🎙️ Listening...", "listening");
+        } catch(e) {}
+    }
+
     window.onload = () => {
         renderHierarchy();
-
-        // Start with GA Intro directly
-        const firstItem = scriptsData.find(i => i.id === "ga_intro");
-        
-        // Browser Autoplay Policy Handler
-        document.body.addEventListener('click', () => {
-            if (!isRobotSpeaking && audioPlayer.paused) {
-                playRobotResponse(firstItem);
-            }
-        }, { once: true });
-
-        // Auto-play initial intro
+        let firstItem = scriptsData.find(i => i.id === modesSequence[0]);
         playRobotResponse(firstItem);
     };
 </script>
-
 </body>
 </html>
