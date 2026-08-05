@@ -191,54 +191,54 @@
             audioUrl: "level1_genai_en.mp3" 
         },
 
-        // --- GA Level 2 Items (Chinese Mode) ---
+        // --- GA Level 2 Items (Restored Detailed Cantonese Descriptions) ---
         { 
             id: "ga1_zh", cat: "ga", lang: "zh", level: 2, 
             title: "1. Citizenship (公民)", 
             keywords: ["公民", "citizenship", "全球思維", "全球", "道德責任", "sdg", "永續發展"], 
-            text: "具備全球思維，肩負道德責任，致力於可持續發展。", 
+            text: "『公民』特質係要培養同學嘅全球思維同道德責任。透過海外交流同埋認識聯合國永續發展目標，讓同學理解國際社會關注嘅議題，提升喺企業嘅競爭力。", 
             audioUrl: "ga_1_citizenship.mp3" 
         },
         { 
             id: "ga2_zh", cat: "ga", lang: "zh", level: 2, 
             title: "2. Knowledge (知識)", 
             keywords: ["知識", "knowledge", "主修", "跨學科", "學科", "技能"], 
-            text: "精通學科及跨學科知識。", 
+            text: "『知識』特質講求精通主修學科同埋跨學科知識。結合科技同人文學科，訓練同學掌握業界最新嘅技能，適應多元化嘅需求。", 
             audioUrl: "ga_2_knowledge.mp3" 
         },
         { 
             id: "ga3_zh", cat: "ga", lang: "zh", level: 2, 
             title: "3. Learning (學習)", 
             keywords: ["學習", "learning", "反思", "虛心", "自主", "求學", "解決問題"], 
-            text: "善於反思、虛心、自主求學，以兼具人文和科技的視野解決問題。", 
+            text: "『學習』特質著重善於反思、虛心同埋自主求學。培養同學兼具人文同科技視野去解決問題。", 
             audioUrl: "ga_3_learning.mp3" 
         },
         { 
             id: "ga4_zh", cat: "ga", lang: "zh", level: 2, 
             title: "4. Creativity (創意)", 
             keywords: ["創意", "creativity", "創新", "開拓"], 
-            text: "具創新和開拓精神。", 
+            text: "『創意』特質強調創新同開拓精神。呢種主動求變同突破傳統嘅思維，可以協助同學喺未來任何行業靈活應對變局，推動突破同創新。", 
             audioUrl: "ga_4_creativity.mp3" 
         },
         { 
             id: "ga5_zh", cat: "ga", lang: "zh", level: 2, 
             title: "5. Communication (溝通)", 
             keywords: ["溝通", "communication", "同理心", "語言", "表達", "對話"], 
-            text: "富有同理心，有效地以多種語言及方式溝通。", 
+            text: "『溝通』特質強調同理心同多種語言表達技巧。浸大提供豐富嘅語文訓練同跨文化交流活動，提升同學喺職場同日常團隊中嘅溝通能力。", 
             audioUrl: "ga_5_communication.mp3" 
         },
         { 
             id: "ga6_zh", cat: "ga", lang: "zh", level: 2, 
             title: "6. Teamwork (群體)", 
             keywords: ["群體", "團隊", "teamwork", "協作", "合作", "社群"], 
-            text: "團隊協作，服務多元社群。", 
+            text: "『群體』特質著重團隊協作，服務多元社群。鍛鍊同學嘅人際適應力，迅速融入唔同團隊，創造不可替代嘅團隊生產力。", 
             audioUrl: "ga_6_teamwork.mp3" 
         },
         { 
             id: "ga7_zh", cat: "ga", lang: "zh", level: 2, 
             title: "7. Well-being (康健)", 
             keywords: ["康健", "健康", "well-being", "wellbeing", "身心", "心靈", "體魄"], 
-            text: "身心靈健康。", 
+            text: "『康健』特質強調身、心、靈三個層面嘅均衡發展。同學喺大學期間培養強健體魄、建立情緒韌性，確立個人價值同使命感。未來喺面對職場挑戰時，依然可以保持內在平衡。", 
             audioUrl: "ga_7_wellbeing.mp3" 
         },
 
@@ -324,7 +324,6 @@
         }
     ];
 
-    // Dictionary of Exit Responses per Mode
     const goodbyeResponses = {
         "ga_intro_zh": {
             audio: "prompt_goodbye_zh.mp3",
@@ -456,7 +455,6 @@
         let activeIntro = scriptsData.find(i => i.id === modesSequence[currentModeIndex]);
         let lang = activeIntro.lang;
 
-        // Check for exit / goodbye keywords
         if (endKeywords.some(kw => userSpeech.toLowerCase().includes(kw))) {
             failedAttempts = 0;
             handleGoodbyeAndSwitch();
