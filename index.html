@@ -249,7 +249,7 @@
             cat: "ga", 
             level: 1,
             title: "📢 Level 1: GA Overview (全人教育簡介)", 
-            keywords: ["全人教育", "畢業生特質", "Overview", "歡迎", "特質"], 
+            keywords: ["全人教育", "畢業生特質", "overview", "歡迎", "特質", "ga", "graduate attributes"], 
             text: "歡迎嚟到香港浸會大學！浸大以『全人教育』為理念，致力啟發同學嘅全人潛能。同學喺大學期間培養公民、知識、學習、創意、溝通、群體同埋康健七大畢業生特質，就會成為全面發展、敢於創新嘅跨學科人才，積極回饋社會！話我知你想知多啲邊個特質！", 
             audioUrl: "level1_ga.mp3" 
         },
@@ -258,37 +258,126 @@
             cat: "ai", 
             level: 1,
             title: "📢 Level 1: GenAI Overview (AI 原則簡介)", 
-            keywords: ["人工智能原則", "生成式人工智能", "人工智能理念", "原則"], 
+            keywords: ["人工智能原則", "生成式人工智能", "人工智能理念", "原則", "ai", "genai", "generative ai"], 
             text: "歡迎了解浸大嘅人工智能教學理念！浸大針對生成式人工智能制定咗四大教學同評核原則：包括人工智能賦能、人工智能批判、人工智能倫理，同埋樹立人類獨特性！可以問下我，再話多啲比你知！", 
             audioUrl: "level1_genai.mp3" 
         },
 
-        // GA Level 2 Items
-        { id: "ga1", cat: "ga", level: 2, title: "1. Citizenship (公民)", keywords: ["公民", "Citizenship"], text: "『公民』特質係要培養同學嘅全球思維同道德責任。透過海外交流同埋認識聯合國永續發展目標，讓同學理解國際社會關注嘅議題，提升喺企業嘅競爭力。", audioUrl: "ga_1_citizenship.mp3" },
-        { id: "ga2", cat: "ga", level: 2, title: "2. Knowledge (知識)", keywords: ["知識", "Knowledge"], text: "『知識』特質講求精通主修學科同埋跨學科知識。結合科技同人文學科，訓練同學掌握業界最新嘅技能，適應多元化嘅需求。", audioUrl: "ga_2_knowledge.mp3" },
-        { id: "ga3", cat: "ga", level: 2, title: "3. Learning (學習)", keywords: ["學習", "Learning"], text: "『學習』特質著重善於反思、虛心同埋自主求學。培養同學兼具人文同科技視野去解決問題。", audioUrl: "ga_3_learning.mp3" },
-        { id: "ga4", cat: "ga", level: 2, title: "4. Creativity (創意)", keywords: ["創意", "Creativity"], text: "『創意』特質強調創新同開拓精神。呢種主動求變同突破傳統嘅思維，可以協助同學喺未來任何行業靈活應對變局，推動突破同創新。", audioUrl: "ga_4_creativity.mp3" },
-        { id: "ga5", cat: "ga", level: 2, title: "5. Communication (溝通)", keywords: ["溝通", "Communication"], text: "『溝通』特質強調同理心同多種語言表達能技巧。浸大提供豐富嘅語文訓練同跨文化交流活動，提升同學喺職場同日常團隊中嘅溝通能力。", audioUrl: "ga_5_communication.mp3" },
-        { id: "ga6", cat: "ga", level: 2, title: "6. Teamwork (群體)", keywords: ["群體", "團隊", "Teamwork"], text: "『群體』特質著重團隊協作，服務多元社群。鍛鍊同學嘅人際適應力。迅速融入唔同團隊，創造不可替代嘅團隊生產力。", audioUrl: "ga_6_teamwork.mp3" },
-        { id: "ga7", cat: "ga", level: 2, title: "7. Well-being (康健)", keywords: ["康健", "健康", "Well-being"], text: "『康健』特質強調身、心、靈三個層面嘅均衡發展。同學喺大學期間培養強健體魄、建立情緒韌性，確立個人價值同使命感。未來喺面對職場挑戰時，依然可以保持內在平衡。", audioUrl: "ga_7_wellbeing.mp3" },
+        // GA Level 2 Items (Strictly unique, non-number keywords)
+        { 
+            id: "ga1", 
+            cat: "ga", 
+            level: 2, 
+            title: "1. Citizenship (公民)", 
+            keywords: ["公民", "citizenship", "全球思維", "全球", "道德責任", "海外交流", "交流", "聯合國", "sdg", "永續發展", "國際", "企業競爭力"], 
+            text: "『公民』特質係要培養同學嘅全球思維同道德責任。透過海外交流同埋認識聯合國永續發展目標，讓同學理解國際社會關注嘅議題，提升喺企業嘅競爭力。", 
+            audioUrl: "ga_1_citizenship.mp3" 
+        },
+        { 
+            id: "ga2", 
+            cat: "ga", 
+            level: 2, 
+            title: "2. Knowledge (知識)", 
+            keywords: ["知識", "knowledge", "主修", "跨學科", "學科", "人文", "技能", "業界", "多元化"], 
+            text: "『知識』特質講求精通主修學科同埋跨學科知識。結合科技同人文學科，訓練同學掌握業界最新嘅技能，適應多元化嘅需求。", 
+            audioUrl: "ga_2_knowledge.mp3" 
+        },
+        { 
+            id: "ga3", 
+            cat: "ga", 
+            level: 2, 
+            title: "3. Learning (學習)", 
+            keywords: ["學習", "learning", "反思", "虛心", "自主", "求學", "學術", "解決問題", "研究"], 
+            text: "『學習』特質著重善於反思、虛心同埋自主求學。培養同學兼具人文同科技視野去解決問題。", 
+            audioUrl: "ga_3_learning.mp3" 
+        },
+        { 
+            id: "ga4", 
+            cat: "ga", 
+            level: 2, 
+            title: "4. Creativity (創意)", 
+            keywords: ["創意", "creativity", "創新", "開拓", "求變", "突破", "傳統", "靈活", "變局", "發明"], 
+            text: "『創意』特質強調創新同開拓精神。呢種主動求變同突破傳統嘅思維，可以協助同學喺未來任何行業靈活應對變局，推動突破同創新。", 
+            audioUrl: "ga_4_creativity.mp3" 
+        },
+        { 
+            id: "ga5", 
+            cat: "ga", 
+            level: 2, 
+            title: "5. Communication (溝通)", 
+            keywords: ["溝通", "communication", "同理心", "語言", "表達", "語文", "跨文化", "對話", "說話"], 
+            text: "『溝通』特質強調同理心同多種語言表達能技巧。浸大提供豐富嘅語文訓練同跨文化交流活動，提升同學喺職場同日常團隊中嘅溝通能力。", 
+            audioUrl: "ga_5_communication.mp3" 
+        },
+        { 
+            id: "ga6", 
+            cat: "ga", 
+            level: 2, 
+            title: "6. Teamwork (群體)", 
+            keywords: ["群體", "團隊", "teamwork", "協作", "合作", "多元社群", "社群", "人際", "適應力", "生產力"], 
+            text: "『群體』特質著重團隊協作，服務多元社群。鍛鍊同學嘅人際適應力。迅速融入唔同團隊，創造不可替代嘅團隊生產力。", 
+            audioUrl: "ga_6_teamwork.mp3" 
+        },
+        { 
+            id: "ga7", 
+            cat: "ga", 
+            level: 2, 
+            title: "7. Well-being (康健)", 
+            keywords: ["康健", "健康", "well-being", "wellbeing", "身心", "心靈", "體魄", "情緒", "韌性", "價值", "使命感", "內在平衡", "壓力"], 
+            text: "『康健』特質強調身、心、靈三個層面嘅均衡發展。同學喺大學期間培養強健體魄、建立情緒韌性，確立個人價值同使命感。未來喺面對職場挑戰時，依然可以保持內在平衡。", 
+            audioUrl: "ga_7_wellbeing.mp3" 
+        },
 
-        // GenAI Level 2 Items
-        { id: "ai1", cat: "ai", level: 2, title: "1. AI-Empowering (AI 賦能)", keywords: ["賦能", "Empowering"], text: "『人工智能賦能』原則旨在擁抱生成式人工智能，賦能師生發揮人工智能嘅潛力，將佢融入大學嘅知識創造同教學生態之中。", audioUrl: "ai_1_empowering.mp3" },
-        { id: "ai2", cat: "ai", level: 2, title: "2. AI-Critical (AI 批判)", keywords: ["批判", "Critical"], text: "『人工智能批判』原則旨在鼓勵對生成式人工智能保持健康、有理據嘅懷疑態度，培養師生批判性思考，同埋理解人工智能嘅優勢、缺點同局限。", audioUrl: "ai_2_critical.mp3" },
-        { id: "ai3", cat: "ai", level: 2, title: "3. AI-Ethical (AI 倫理)", keywords: ["倫理", "Ethical"], text: "『人工智能倫理』原則旨在維護學術誠信同透明度，喺合符倫理嘅狀況下使用生成式人工智能。", audioUrl: "ai_3_ethical.mp3" },
-        { id: "ai4", cat: "ai", level: 2, title: "4. Build Human Uniqueness (樹立人類獨特性)", keywords: ["獨特性", "人類獨特性", "Uniqueness"], text: "『樹立人類獨特性』原則旨在肯定師生嘅獨特經驗、知識同技能，喺大學教學生態系統中提供空間同時間，讓每個人發掘同發展自身嘅獨特價值。", audioUrl: "ai_4_uniqueness.mp3" }
+        // GenAI Level 2 Items (Strictly unique, non-number keywords)
+        { 
+            id: "ai1", 
+            cat: "ai", 
+            level: 2, 
+            title: "1. AI-Empowering (AI 賦能)", 
+            keywords: ["賦能", "empowering", "empower", "擁抱", "潛力", "創造", "教學生態", "應用"], 
+            text: "『人工智能賦能』原則旨在擁抱生成式人工智能，賦能師生發揮人工智能嘅潛力，將佢融入大學嘅知識創造同教學生態之中。", 
+            audioUrl: "ai_1_empowering.mp3" 
+        },
+        { 
+            id: "ai2", 
+            cat: "ai", 
+            level: 2, 
+            title: "2. AI-Critical (AI 批判)", 
+            keywords: ["批判", "critical", "懷疑", "批判性思考", "思考", "優勢", "缺點", "局限", "限制", "真偽", "驗證"], 
+            text: "『人工智能批判』原則旨在鼓勵對生成式人工智能保持健康、有理據嘅懷疑態度，培養師生批判性思考，同埋理解人工智能嘅優勢、缺點同局限。", 
+            audioUrl: "ai_2_critical.mp3" 
+        },
+        { 
+            id: "ai3", 
+            cat: "ai", 
+            level: 2, 
+            title: "3. AI-Ethical (AI 倫理)", 
+            keywords: ["倫理", "ethical", "ethics", "學術誠信", "誠信", "透明度", "透明", "抄襲", "規矩"], 
+            text: "『人工智能倫理』原則旨在維護學術誠信同透明度，喺合符倫理嘅狀況下使用生成式人工智能。", 
+            audioUrl: "ai_3_ethical.mp3" 
+        },
+        { 
+            id: "ai4", 
+            cat: "ai", 
+            level: 2, 
+            title: "4. Build Human Uniqueness (樹立人類獨特性)", 
+            keywords: ["獨特性", "人類獨特性", "uniqueness", "unique", "人類", "獨特", "經驗", "不可替代", "以人為本"], 
+            text: "『樹立人類獨特性』原則旨在肯定師生嘅獨特經驗、知識同技能，喺大學教學生態系統中提供空間同時間，讓每個人發掘同發展自身嘅獨特價值。", 
+            audioUrl: "ai_4_uniqueness.mp3" 
+        }
     ];
 
     // End / Next keywords in Cantonese
-    const endKeywords = ["完", "拜拜", "下一個", "冇啦", "結束", "next", "bye", "完結"];
+    const endKeywords = ["完", "拜拜", "下一個", "冇啦", "結束", "next", "bye", "完結", "切換", "轉主題"];
 
     // Random selection trigger keywords in Cantonese/English
-    const randomKeywords = ["是但", "是旦", "隨意", "求其", "無所謂", "亂嚟", "任意", "random", "anything", "whatever"];
+    const randomKeywords = ["是但", "是旦", "隨意", "求其", "無所謂", "亂嚟", "任意", "random", "anything", "whatever", "求便", "求其講"];
 
     // System States
     let currentMode = "ga"; // 'ga' or 'ai'
     let recognition = null;
     let isRobotSpeaking = false;
+    let failedAttempts = 0; // Track consecutive unrecognized user inputs
     const audioPlayer = document.getElementById('global-audio-player');
 
     // --- Render Hierarchy Cards ---
@@ -356,15 +445,20 @@
     }
 
     // --- Play Audio & Flow Controller ---
-    function playRobotResponse(item, isFollowUpNeeded = false) {
+    function playRobotResponse(item, isFollowUpNeeded = false, prefixText = "", extraAudioPrefix = null) {
         isRobotSpeaking = true;
         if (recognition) recognition.stop();
 
         setStatus("🐕 Speaking...", "speaking");
         highlightCard(item.id);
 
-        let chatText = item.text;
-        let playlist = [item.audioUrl];
+        let chatText = prefixText + item.text;
+        let playlist = [];
+
+        if (extraAudioPrefix) {
+            playlist.push(extraAudioPrefix);
+        }
+        playlist.push(item.audioUrl);
 
         if (isFollowUpNeeded) {
             chatText += " 你仲想了解邊一項，定係想結束呢？";
@@ -378,6 +472,15 @@
             setStatus("🎙️ Listening...", "listening");
             startSpeechRecognition();
         });
+    }
+
+    // Helper: Select and play a random Level 2 item from current mode
+    function triggerRandomLevel2(prefixText = "", extraAudioPrefix = null) {
+        const level2Items = scriptsData.filter(item => item.cat === currentMode && item.level === 2);
+        if (level2Items.length > 0) {
+            const randomItem = level2Items[Math.floor(Math.random() * level2Items.length)];
+            playRobotResponse(randomItem, true, prefixText, extraAudioPrefix);
+        }
     }
 
     // --- Speech Recognition Engine ---
@@ -422,8 +525,9 @@
         addChatMessage("user", userSpeech);
 
         // 1. Check if user wants to end or switch mode
-        const isEndCall = endKeywords.some(kw => userSpeech.toLowerCase().includes(kw));
+        const isEndCall = endKeywords.some(kw => userSpeech.toLowerCase().includes(kw.toLowerCase()));
         if (isEndCall) {
+            failedAttempts = 0; // Reset counter on valid command
             switchMode();
             return;
         }
@@ -431,12 +535,9 @@
         // 2. Check if user asks for a random selection ("是但", "隨意", "求其", etc.)
         const isRandomRequest = randomKeywords.some(kw => userSpeech.toLowerCase().includes(kw.toLowerCase()));
         if (isRandomRequest) {
-            const level2Items = scriptsData.filter(item => item.cat === currentMode && item.level === 2);
-            if (level2Items.length > 0) {
-                const randomItem = level2Items[Math.floor(Math.random() * level2Items.length)];
-                playRobotResponse(randomItem, true);
-                return;
-            }
+            failedAttempts = 0; // Reset counter on valid command
+            triggerRandomLevel2();
+            return;
         }
 
         // 3. Match against current category items via keywords
@@ -447,26 +548,40 @@
         );
 
         if (matchingItem) {
+            failedAttempts = 0; // Reset counter on successful keyword match
             playRobotResponse(matchingItem, true);
         } else {
-            // Unrecognized keyword: play retry MP3 sequence
-            isRobotSpeaking = true;
-            if (recognition) recognition.stop();
+            // Unrecognized keyword handling
+            failedAttempts++;
 
-            setStatus("🐕 Speaking...", "speaking");
-            const retryText = "我未好聽得清，你可以再講多一次想了解邊一個項目，或者講『下一個』切換主題！";
-            addChatMessage("robot", retryText);
+            if (failedAttempts >= 2) {
+                // Limit reached (2nd failed attempt): State unrecognized and transition to random topic
+                failedAttempts = 0; // Reset counter
+                
+                const fallbackIntroText = "我仲係聽唔太清，不如等我隨機為你介紹其中一個項目啦！";
+                triggerRandomLevel2(fallbackIntroText, "prompt_fallback_random.mp3");
 
-            playAudioSequence(["prompt_retry.mp3"], () => {
-                isRobotSpeaking = false;
-                setStatus("🎙️ Listening...", "listening");
-                startSpeechRecognition();
-            });
+            } else {
+                // 1st failed attempt: Ask user to repeat / clarify
+                isRobotSpeaking = true;
+                if (recognition) recognition.stop();
+
+                setStatus("🐕 Speaking...", "speaking");
+                const retryText = "我未好聽得清，你可以再講多一次想了解邊一個項目，或者講『下一個』切換主題！";
+                addChatMessage("robot", retryText);
+
+                playAudioSequence(["prompt_retry.mp3"], () => {
+                    isRobotSpeaking = false;
+                    setStatus("🎙️ Listening...", "listening");
+                    startSpeechRecognition();
+                });
+            }
         }
     }
 
     // --- Switch between GA and GenAI Mode ---
     function switchMode() {
+        failedAttempts = 0; // Reset counter on mode switch
         if (currentMode === "ga") {
             currentMode = "ai";
             const introAI = scriptsData.find(i => i.id === "ai_intro");
